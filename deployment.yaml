@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-process-faceid
+  namespace: $NAMESPACE
+  labels:
+    app: ms-process-faceid
+spec:
+  replicas: $REPLICAS
+  selector:
+    matchLabels:
+      app: ms-process-faceid
+  template:
+    metadata:
+      labels:
+        app: ms-process-faceid
+    spec:
+      hostNetwork: false
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        environment: $ENVIRONMENT
+      imagePullSecrets:
+      - name: pipeline-docker-registry
+      containers:
+      - image: 183018667092.dkr.ecr.us-east-2.amazonaws.com/$IMAGE_REPO_NAME:lates#
+        name: ms-process-faceid
+        ports:
+        - containerPort: 5500
+        env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: api-secrets
+                key: aws.accesskey
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: api-secrets
+                key: aws.secretkey
+          - name: OPENSEARCH_USER
+            valueFrom:
+              secretKeyRef:
+                name: api-secrets
+                key: app.opensearch_user
+          - name: OPENSEARCH_PASS
+            valueFrom:
+              secretKeyRef:
+                name: api-secrets
+                key: app.opensearch_pass
+
+          # #######################
+          # App configuration 
+          # #######################
+          - name: ELASTIC_SERVER
+            valueFrom:
+              configMapKeyRef:
+                name: ms-process-faceid-config
+                key: elastic.server
+          - name: AWS_REGION
+            valueFrom:
+              configMapKeyRef:
+                name: ms-process-faceid-config
+                key: aws.region
+          - name: OPENSEARCH_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: ms-process-faceid-config
+                key: opensearch.port
+          - name: MAPS_API
+            valueFrom:
+              configMapKeyRef:
+                name: ms-process-faceid-config
+                key: maps.key                
+          - name: QUEUE_SEND_ALERTS_TRACEBACK
+            valueFrom:
+              configMapKeyRef:
+                name: ms-process-faceid-config
+                key: queue.send.alerts.traceback
+          - name: ENV
+            valueFrom:
+              configMapKeyRef:
+                name: ms-process-faceid-config              
+                key: app.env
