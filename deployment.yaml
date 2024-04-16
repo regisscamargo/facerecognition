@@ -22,7 +22,7 @@ spec:
       imagePullSecrets:
       - name: pipeline-docker-registry
       containers:
-      - image: 183018667092.dkr.ecr.us-east-2.amazonaws.com/$IMAGE_REPO_NAME:lates#
+      - image: #DOCKER_REGISTRY#/$NAMESPACE/ms-process-faceid:$TAG
         name: ms-process-faceid
         ports:
         - containerPort: 5500
