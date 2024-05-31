@@ -14,6 +14,6 @@ python_dateutil==2.8.1
 pytz==2020.4
 requests_aws4auth==1.1.1
 Shapely==1.7.0
-Werkzeug==1.0.1
+Werkzeug==3.0.3
 gunicorn==19.9.0
 markupsafe==2.0.1
